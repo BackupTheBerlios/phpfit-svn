@@ -1,7 +1,10 @@
 <?php
 
-class PHPFIT_Parse {
+// Copyright (c) 2002 Cunningham & Cunningham, Inc.
+// Released under the terms of the GNU General Public License version 2 or later.
 
+class PHPFIT_Parse
+{
     /**
      * @var string
      */
@@ -25,7 +28,8 @@ class PHPFIT_Parse {
     /**
     * Use PHPFIT_Parse::create...
     */
-    private function __construct() {
+    private function __construct()
+    {
     }
 
     /**
@@ -34,7 +38,8 @@ class PHPFIT_Parse {
      * @param int $level
      * @param int $offset
      */
-    public static function create($text, $tags = null, $level = 0, $offset = 0) {
+    public static function create($text, $tags = null, $level = 0, $offset = 0) 
+    {
         $instance = new PHPFIT_Parse();
 
         if ($tags == null) {
@@ -72,7 +77,8 @@ class PHPFIT_Parse {
         return $instance;
     }
 
-    public static function createSimple($tag, $body = null, $parts = null, $more = null) {
+    public static function createSimple($tag, $body = null, $parts = null, $more = null) 
+    {
         $instance = new PHPFIT_Parse();
 
         $instance->leader = "\n";
@@ -89,31 +95,35 @@ class PHPFIT_Parse {
     /**
      * @return int
      */
-    public function size() {
+    public function size() 
+    {
         return ($this->more == null) ? 1 : $this->more->size() + 1;
     }
 
     /**
      * @return PHPFIT_Parse
      */
-    public function last() {
+    public function last() 
+    {
         return ($this->more == null) ? $this : $this->more->last();
     }
 
     /**
      * @return PHPFIT_Parse
      */
-    public function leaf() {
+    public function leaf() 
+    {
         return ($this->parts == null) ? $this : $this->parts->leaf();
     }
 
     /**
-     * @param int $i: table
-     * @param int $j: row
-     * @param int $k: column
+     * @param int $i table
+     * @param int $j row
+     * @param int $k column
      * @return PHPFIT_Parse
      */
-    public function at($i, $j = null, $k = null) {
+    public function at($i, $j = null, $k = null) 
+    {
         if ($j !== null && $k !== null) // 3 params
             return $this->at($i, $j)->parts->at($k);
         else if ($j !== null) // 2 params
@@ -125,7 +135,8 @@ class PHPFIT_Parse {
     /**
      * @return string
      */
-    public function text() {
+    public function text() 
+    {
         return PHPFIT_Parse :: htmlToText($this->body);
     }
 
@@ -133,7 +144,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    public static function htmlToText($s) {
+    public static function htmlToText($s) 
+    {
         $s = PHPFIT_Parse :: normalizeLineBreaks($s);
         $s = PHPFIT_Parse :: removeNonBreakTags($s);
         $s = PHPFIT_Parse :: condenseWhitespace($s);
@@ -146,7 +158,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    public static function unescape($s) {
+    public static function unescape($s) 
+    {
         $s = str_replace("<br />", "\n", $s);
         $s = PHPFIT_Parse :: unescapeEntities($s);
         $s = PHPFIT_Parse :: unescapeSmartQuotes($s);
@@ -157,7 +170,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    private static function unescapeEntities($s) {
+    private static function unescapeEntities($s) 
+    {
         $s = str_replace('&lt;', '<', $s);
         $s = str_replace('&gt;', '>', $s);
         $s = str_replace('&nbsp;', ' ', $s);
@@ -170,7 +184,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    public static function unescapeSmartQuotes($s) {
+    public static function unescapeSmartQuotes($s) 
+    {
         /* NOT SURE */
         $s = ereg_replace('<93>', '"', $s);
         $s = ereg_replace('<94>', '"', $s);
@@ -184,7 +199,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    private static function normalizeLineBreaks($s) {
+    private static function normalizeLineBreaks($s) 
+    {
         $s = preg_replace('|<\s*br\s*/?\s*>|s', '<br />', $s);
         $s = preg_replace('|<\s*/\s*p\s*>\s*<\s*p( .*?)?>|s', '<br />', $s);
         return $s;
@@ -194,11 +210,12 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    public static function condenseWhitespace($s) {
-        $NON_BREAKING_SPACE = chr(160);
+    public static function condenseWhitespace($s) 
+    {
+        $nonBreakingSpace = chr(160);
 
         $s = preg_replace('|\s+|s', ' ', $s);
-        $s = ereg_replace($NON_BREAKING_SPACE, ' ', $s);
+        $s = ereg_replace($nonBreakingSpace, ' ', $s);
         $s = ereg_replace('&nbsp;', ' ', $s);
 
         $s = trim($s, "\t\n\r\ ");
@@ -209,7 +226,8 @@ class PHPFIT_Parse {
      * @param string $s
      * @return string
      */
-    private static function removeNonBreakTags($s) {
+    private static function removeNonBreakTags($s) 
+    {
         $i = 0;
         $i = strpos($s, '<', $i);
         while ($i !== false) {
@@ -232,7 +250,8 @@ class PHPFIT_Parse {
     /**
      * @param string $text
      */
-    public function addToTag($text) {
+    public function addToTag($text) 
+    {
         $last = strlen($this->tag) - 1;
         $this->tag = substr($this->tag, 0, $last) . $text . '>';
     }
@@ -240,14 +259,16 @@ class PHPFIT_Parse {
     /**
      * @param string $text
      */
-    public function addToBody($text) {
+    public function addToBody($text) 
+    {
         $this->body = $this->body . $text;
     }
 
     /**
      * @return string
      */
-    public function toString() {
+    public function toString() 
+    {
         $out = $this->leader;
         $out .= $this->tag;
         if ($this->parts != null) {
@@ -265,12 +286,13 @@ class PHPFIT_Parse {
     }
 }
 
-class PHPFIT_Exception_Parse extends Exception {
+class PHPFIT_Exception_Parse extends Exception
+{
 
     /**
     * @var int
     */
-    protected $offset = 0;
+    protected $_offset = 0;
 
     /**
     * constructor
@@ -279,8 +301,9 @@ class PHPFIT_Exception_Parse extends Exception {
     * @param int $offset
     * @see Exception
     */
-    public function __construct($msg, $offset) {
-        $this->offset = $offset;
+    public function __construct($msg, $offset) 
+    {
+        $this->_offset = $offset;
         $this->message = $msg;
         parent :: __construct($this->message);
     }
@@ -288,15 +311,16 @@ class PHPFIT_Exception_Parse extends Exception {
     /**
     * @return int parser offset
     */
-    public function getOffset() {
-        return $this->offset;
+    public function getOffset() 
+    {
+        return $this->_offset;
     }
 
     /**
     * @return string of error message including offest
     */
-    public function __toString() {
-        return $this->message . ' at ' . $this->offset;
+    public function __toString() 
+    {
+        return $this->message . ' at ' . $this->_offset;
     }
 }
-?>
