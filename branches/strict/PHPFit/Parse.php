@@ -3,7 +3,7 @@
 // Copyright (c) 2002 Cunningham & Cunningham, Inc.
 // Released under the terms of the GNU General Public License version 2 or later.
 
-class PHPFIT_Parse
+class PHPFit_Parse
 {
     /**
      * @var string
@@ -15,7 +15,7 @@ class PHPFIT_Parse
     public $trailer;
 
     /**
-     * @var PHPFIT_Parse
+     * @var PHPFit_Parse
      */
     public $parts;
     public $more;
@@ -26,7 +26,7 @@ class PHPFIT_Parse
     public static $tags = array ('table', 'tr', 'td');
 
     /**
-    * Use PHPFIT_Parse::create...
+    * Use PHPFit_Parse::create...
     */
     private function __construct()
     {
@@ -40,10 +40,10 @@ class PHPFIT_Parse
      */
     public static function create($text, $tags = null, $level = 0, $offset = 0) 
     {
-        $instance = new PHPFIT_Parse();
+        $instance = new PHPFit_Parse();
 
         if ($tags == null) {
-            $tags = PHPFIT_Parse :: $tags;
+            $tags = PHPFit_Parse::$tags;
         }
 
         $startTag = stripos($text, '<' . $tags[$level]);
@@ -53,7 +53,7 @@ class PHPFIT_Parse
         $startMore = stripos($text, '<' . $tags[$level], $endEnd);
 
         if ($startTag === false || $endTag === false || $startEnd === false || $endEnd === false) {
-            throw new PHPFIT_Exception_Parse('Can\'t find tag: ' . $tags[$level], $offset);
+            throw new PHPFit_Exception_Parse('Can\'t find tag: ' . $tags[$level], $offset);
         }
 
         $instance->leader = substr($text, 0, $startTag);
@@ -64,13 +64,13 @@ class PHPFIT_Parse
 
         // we are not at cell-level, so dig further down
         if (($level + 1) < count($tags)) {
-            $instance->parts = PHPFIT_Parse :: create($instance->body, $tags, $level + 1, $offset + $endTag);
+            $instance->parts = PHPFit_Parse::create($instance->body, $tags, $level + 1, $offset + $endTag);
             $instance->body = null;
         }
 
         // if you have more of the same
         if ($startMore !== false) {
-            $instance->more = PHPFIT_Parse :: create($instance->trailer, $tags, $level, $offset + $endEnd);
+            $instance->more = PHPFit_Parse::create($instance->trailer, $tags, $level, $offset + $endEnd);
             $instance->trailer = null;
         }
 
@@ -79,7 +79,7 @@ class PHPFIT_Parse
 
     public static function createSimple($tag, $body = null, $parts = null, $more = null) 
     {
-        $instance = new PHPFIT_Parse();
+        $instance = new PHPFit_Parse();
 
         $instance->leader = "\n";
         $instance->tag = "<" . $tag . ">";
@@ -101,7 +101,7 @@ class PHPFIT_Parse
     }
 
     /**
-     * @return PHPFIT_Parse
+     * @return PHPFit_Parse
      */
     public function last() 
     {
@@ -109,7 +109,7 @@ class PHPFIT_Parse
     }
 
     /**
-     * @return PHPFIT_Parse
+     * @return PHPFit_Parse
      */
     public function leaf() 
     {
@@ -120,7 +120,7 @@ class PHPFIT_Parse
      * @param int $i table
      * @param int $j row
      * @param int $k column
-     * @return PHPFIT_Parse
+     * @return PHPFit_Parse
      */
     public function at($i, $j = null, $k = null) 
     {
@@ -137,7 +137,7 @@ class PHPFIT_Parse
      */
     public function text() 
     {
-        return PHPFIT_Parse :: htmlToText($this->body);
+        return PHPFit_Parse::htmlToText($this->body);
     }
 
     /**
@@ -146,10 +146,10 @@ class PHPFIT_Parse
      */
     public static function htmlToText($s) 
     {
-        $s = PHPFIT_Parse :: normalizeLineBreaks($s);
-        $s = PHPFIT_Parse :: removeNonBreakTags($s);
-        $s = PHPFIT_Parse :: condenseWhitespace($s);
-        $s = PHPFIT_Parse :: unescape($s);
+        $s = PHPFit_Parse::normalizeLineBreaks($s);
+        $s = PHPFit_Parse::removeNonBreakTags($s);
+        $s = PHPFit_Parse::condenseWhitespace($s);
+        $s = PHPFit_Parse::unescape($s);
 
         return $s;
     }
@@ -161,8 +161,8 @@ class PHPFIT_Parse
     public static function unescape($s) 
     {
         $s = str_replace("<br />", "\n", $s);
-        $s = PHPFIT_Parse :: unescapeEntities($s);
-        $s = PHPFIT_Parse :: unescapeSmartQuotes($s);
+        $s = PHPFit_Parse::unescapeEntities($s);
+        $s = PHPFit_Parse::unescapeSmartQuotes($s);
         return $s;
     }
 
@@ -286,9 +286,8 @@ class PHPFIT_Parse
     }
 }
 
-class PHPFIT_Exception_Parse extends Exception
+class PHPFit_Exception_Parse extends Exception
 {
-
     /**
     * @var int
     */
@@ -305,7 +304,7 @@ class PHPFIT_Exception_Parse extends Exception
     {
         $this->_offset = $offset;
         $this->message = $msg;
-        parent :: __construct($this->message);
+        parent::__construct($this->message);
     }
 
     /**
